@@ -1,0 +1,7 @@
+container:
+  image: jen1g/otus-gateway
+  tag: v1
+  port: 8080
+
+replicaCount: 1
+

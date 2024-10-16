@@ -1,0 +1,486 @@
+{
+	"info": {
+		"_postman_id": "8e66114d-38d1-41ed-a022-0b262964c9f3",
+		"name": "otus-6",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15898283"
+	},
+	"item": [
+		{
+			"name": "Script1",
+			"item": [
+				{
+					"name": "Create user1",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let uniqueId = new Date().getTime();",
+									"",
+									"pm.collectionVariables.set('uniqueId', uniqueId);",
+									"",
+									"let username = `user1_${uniqueId}`;",
+									"",
+									"pm.collectionVariables.set('username_user1', username);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"User creation must return identifier\", () => {",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(pm.response.json().id).not.undefined;",
+									"});",
+									"pm.collectionVariables.set('user1', pm.response.json().id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{username_user1}}\",\n    \"password\": \"passwd1\",\n    \"firstName\": \"usr1\",\n    \"lastName\": \"usr1\",\n    \"phone\": \"1111\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Access user1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"New user should not be available without auth\", () => {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/{{user1}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"{{user1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate user1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"user1 is authenticated\", () => {",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(pm.response.headers.get('Set-Cookie')).not.undefined;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "{{username_user1}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "passwd1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authorize user1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"User gets auth token\", () => {",
+									"    const token = pm.response.headers.get('X-Auth-Token');",
+									"    pm.expect(token).not.undefined;",
+									"    pm.collectionVariables.set('x-auth-token-user1', token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/auth",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user1 firstname",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.request.headers.upsert({key: 'X-Auth-Token', value: pm.collectionVariables.get('x-auth-token-user1') });"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"User firstname changed\", () => {",
+									"    pm.response.to.have.status(200);",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.firstName).to.eql(\"changed name\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"changed name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/{{user1}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"{{user1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user2",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Генерируем уникальный идентификатор на основе текущего времени",
+									"let uniqueId = new Date().getTime();",
+									"",
+									"// Сохраняем уникальный идентификатор в переменной коллекции",
+									"pm.collectionVariables.set('uniqueId2', uniqueId);",
+									"",
+									"// Формируем уникальное имя пользователя",
+									"let username = `user1_${uniqueId}`;",
+									"",
+									"// Сохраняем уникальное имя пользователя в переменной коллекции",
+									"pm.collectionVariables.set('username_user2', username);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"User creation must return identifier\", () => {",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(pm.response.json().id).not.undefined;",
+									"});",
+									"pm.collectionVariables.set('user2', pm.response.json().id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"{{username_user2}}\",\n    \"password\": \"passwd2\",\n    \"firstName\": \"usr2\",\n    \"lastName\": \"usr2\",\n    \"phone\": \"123321\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate user2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authenticate user2\", () => {",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(pm.response.headers.get('Set-Cookie')).not.undefined;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "{{username_user2}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "passwd2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authorize user2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"User gets auth token\", () => {",
+									"    const token = pm.response.headers.get('X-Auth-Token');",
+									"    pm.expect(token).not.undefined;",
+									"    pm.collectionVariables.set('x-auth-token-user2', token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/auth",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Access user1 from user2",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.request.headers.upsert({key: 'X-Auth-Token', value: pm.collectionVariables.get('x-auth-token-user2') });"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"user2 should not access user1's data\", () => {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/{{user1}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"{{user1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Access user2",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.request.headers.upsert({key: 'X-Auth-Token', value: pm.collectionVariables.get('x-auth-token-user2') });"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"user2 should access own data\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/{{user2}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"{{user2}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "user1",
+			"value": ""
+		},
+		{
+			"key": "user2",
+			"value": ""
+		},
+		{
+			"key": "x-auth-token-user1",
+			"value": ""
+		},
+		{
+			"key": "x-auth-token-user2",
+			"value": ""
+		},
+		{
+			"key": "username_user1",
+			"value": ""
+		},
+		{
+			"key": "username_user2",
+			"value": ""
+		},
+		{
+			"key": "uniqueId",
+			"value": ""
+		}
+	]
+}

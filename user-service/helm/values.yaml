@@ -1,0 +1,35 @@
+container:
+  image: jen1g/otus-user-homework-5
+  tag: v1
+  port: 9099
+
+replicaCount: 1
+
+postgresql:
+  auth:
+    postgresPassword: "12345"
+    username: "pguser"
+    password: "12345"
+    database: "user-service"
+  persistence:
+    enabled: true
+    storageClass: "standard" # kubectl get sc
+    accessModes:
+      - ReadWriteOnce
+    size: 2Gi
+
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 100m
+  limits:
+    memory: 1024Mi
+    cpu: 500m
+
+metrics:
+  enabled: false
+
+backup:
+  enabled: false
+
+architecture: standalone

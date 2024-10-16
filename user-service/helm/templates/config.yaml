@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spring-config-user
+data:
+  spring.jpa.hibernate.ddl-auto: update
+  spring.jpa.open-in-view: "false"
+  management.endpoint.health.probes.enabled: "true"
+  #  management.endpoints.web.exposure.include: health,info
+  management.endpoint.health.show-details: always
+  management.metrics.distribution.slo.http.server.requests: "10ms, 50ms, 100ms, 200ms, 300ms, 400ms, 500ms, 600ms, 800ms"
+  management.prometheus.metrics.export.enabled: "true"
+  management.endpoints.web.exposure.include: "*"
+  server.port: "9099"
+#  spring.application.name: "user-service"
+#  management.server.port: "8081"

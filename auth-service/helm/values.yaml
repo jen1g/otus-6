@@ -1,0 +1,20 @@
+container:
+  image: jen1g/otus-auth-homework-5
+  tag: v1
+  port: 8080
+
+replicaCount: 1
+
+
+postgresql:
+  auth:
+    postgresPassword: "12345"
+    username: "pguser"
+    password: "12345"
+    database: "auth-service"
+  persistence:
+    enabled: true
+    storageClass: "standard" # kubectl get sc
+    accessModes:
+      - ReadWriteOnce
+    size: 2Gi
