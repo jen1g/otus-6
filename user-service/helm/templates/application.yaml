@@ -91,19 +91,19 @@ spec:
               memory: "700Mi"
               cpu: "700m"
           ports:
-            - containerPort: 9099
+            - containerPort: {{ .Values.container.port }}
               protocol: TCP
           imagePullPolicy: Always
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
-              port: 9099
+              port: {{ .Values.container.port }}
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
-              port: 9099
+              port: {{ .Values.container.port }}
             initialDelaySeconds: 30
             periodSeconds: 5
 ---
@@ -114,10 +114,10 @@ metadata:
   labels:
     app: {{ .Release.Name }}-service
 spec:
+  selector:
+    app: {{ .Release.Name }}
   ports:
     - name: metrics
       port: 80
-      targetPort: 9099
-  selector:
-    app: {{ .Release.Name }}
+      targetPort: {{ .Values.container.port }}
   type: ClusterIP

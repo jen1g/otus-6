@@ -13,6 +13,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: spring-gateway
+                name: {{ .Release.Name }}-service
                 port:
                   number: 80

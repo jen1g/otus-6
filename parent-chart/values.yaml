@@ -1,27 +1,31 @@
-auth-service:
-  enabled: true
-  postgresql:
-    auth:
-      postgresPassword: "12345"
-      username: "pguser"
-      password: "12345"
-      database: "auth-service"
-    persistence:
-      enabled: true
-      size: 2Gi
-
-gateway-service:
-  enabled: true
-  replicaCount: 1
-
-user-service:
-  enabled: true
-  postgresql:
-    auth:
-      postgresPassword: "12345"
-      username: "pguser"
-      password: "12345"
-      database: "user-service"
-    persistence:
-      enabled: true
-      size: 2Gi
+#auth-service:
+#  tags:
+#    - auth-db
+#  enabled: true
+#  postgresql:
+#    auth:
+#      postgresPassword: "12345"
+#      username: "pguser"
+#      password: "12345"
+#      database: "auth-service"
+#    persistence:
+#      enabled: true
+#      size: 2Gi
+#
+#gateway-service:
+#  enabled: true
+#  replicaCount: 1
+#
+#user-service:
+#  tags:
+#    - user-db
+#  enabled: true
+#  postgresql:
+#    auth:
+#      postgresPassword: "12345"
+#      username: "pguser"
+#      password: "12345"
+#      database: "user-service"
+#    persistence:
+#      enabled: true
+#      size: 2Gi

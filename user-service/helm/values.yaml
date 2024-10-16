@@ -1,3 +1,5 @@
+fullnameOverride: user-service
+
 container:
   image: jen1g/otus-user-homework-5
   tag: v1

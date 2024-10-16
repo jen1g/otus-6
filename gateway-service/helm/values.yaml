@@ -1,3 +1,5 @@
+fullnameOverride: gateway-service
+
 container:
   image: jen1g/otus-gateway
   tag: v1

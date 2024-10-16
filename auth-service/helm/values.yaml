@@ -1,6 +1,6 @@
 container:
   image: jen1g/otus-auth-homework-5
-  tag: v1
+  tag: v2
   port: 8080
 
 replicaCount: 1
@@ -18,3 +18,5 @@ postgresql:
     accessModes:
       - ReadWriteOnce
     size: 2Gi
+
+fullnameOverride: auth-service

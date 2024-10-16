@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-gateway
+  name: {{ .Release.Name }}
   labels:
-    app: spring-gateway
+    app: {{ .Release.Name }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: spring-gateway
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: spring-gateway
+        app: {{ .Release.Name }}
     spec:
       containers:
         - name: {{ .Release.Name }}
@@ -24,7 +24,8 @@ spec:
                   name: spring-config-auth
                   key: jwt.secret
           ports:
-            - containerPort: 8080
+            - containerPort: {{ .Values.container.port }}
+          imagePullPolicy: Always
 ---
 apiVersion: v1
 kind: Service
@@ -33,10 +34,10 @@ metadata:
   labels:
     app: {{ .Release.Name }}-service
 spec:
+  selector:
+    app: {{ .Release.Name }}
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 8080
-  selector:
-    app: {{ .Release.Name }}
+      targetPort: {{ .Values.container.port }}
   type: ClusterIP
